@@ -4,6 +4,7 @@ import * as routers from './src/routers/index.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import { errorMiddleware } from './src/middlewares/error-middleware.js'
+import { checkAccess } from './src/middlewares/checkAuthorization.js'
 const app = express()
 
 app.use(express.urlencoded({ extended: true }))
@@ -18,9 +19,11 @@ app.use('/api', routers.paymentRouter)
 app.use('/api', routers.authRouter)
 app.use(errorMiddleware)
 
-app.get('/', async (req, res) => {
-    res.json('hello world')
+app.get('/api/protected', checkAccess, (req, res) => {
+    const {user} = req
+    res.json('hello world' + Date.now() + ' user: ' + user.id)
 })
+
 app.listen(3000, () => {
     console.log('server started at port 3000')
 })

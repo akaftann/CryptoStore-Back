@@ -89,6 +89,7 @@ class JwtService{
             throw new Error(e.message)
         }
     }
+    
 }
 
 export default new JwtService()

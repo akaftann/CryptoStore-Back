@@ -7,7 +7,7 @@ export const create = async (email, pass, firstName= 'john', lastName='dou')=>{
     try{
         const isExists = await getByEmail(email)
         if (isExists){
-            throw ApiError.BadRequest('Such email already exists') //errors.NotFound('Product does not exist')
+            throw ApiError.Conflict() //errors.NotFound('Product does not exist')
           }
         const row = {
             id: uuidV4(),
@@ -19,7 +19,7 @@ export const create = async (email, pass, firstName= 'john', lastName='dou')=>{
         await db.users.insert(row,{ifNotExists: true},{isIdempotent: true})
         return row
     }catch(e){
-        throw new Error(e)
+        throw e
     }
 }
 

@@ -3,34 +3,34 @@ import * as users from './users.js'
 import jwtService from './jwt.js'
 import { ApiError } from '../exceptions/ap-errors.js'
 
+const expiration = jwtService.access_token_expiration
 
 export const login = async (email, pass)=>{
     try{
         const user = await users.getByEmail(email)
         if(!user){
-            throw ApiError.BadRequest('User not found')
+            throw ApiError.NotFound()
         }
         const isValid = await verify(user.password, pass)
         if(!isValid){
-            throw ApiError.BadRequest('Invalid password')
+            throw ApiError.UnauthorizedError('Invalid login or password')
         }
-        const token = jwtService.generateToken(user.id)
-        await jwtService.saveToken(user.id, token.refreshToken)
-        return token
+        const tokens = jwtService.generateToken(user.id)
+        await jwtService.saveToken(user.id, tokens.refreshToken)
+        return {...tokens, expiration}
     }catch(e){
-        throw new Error(e.message)
+        throw e
     }
 }
 
 export const register = async (email, pass)=>{
     try{
-        const expiration = jwtService.access_token_expiration
         const user = await users.create(email, pass)
         const tokens = jwtService.generateToken(user.id)
         await jwtService.saveToken(user.id, tokens.refreshToken)
         return {...tokens, expiration}
     }catch(e){
-        throw new Error(e.message)
+        throw e
     }
 }
 
@@ -45,8 +45,9 @@ export const logout = async (refreshToken)=>{
 
 export const refresh = async (refreshToken)=>{
     try{
+        console.log('refreshToken: ', refreshToken)
         if(!refreshToken){
-            throw ApiError.UnauthorizedError('Unauthorized user')
+            throw ApiError.UnauthorizedError('Unauthorized')
         }
         const userData = await jwtService.validateRefreshToken(refreshToken)
         const tokenInDb = await jwtService.findInDb(refreshToken)
@@ -58,7 +59,7 @@ export const refresh = async (refreshToken)=>{
         return token
 
     }catch(e){
-
+        throw e
     }
 }
 

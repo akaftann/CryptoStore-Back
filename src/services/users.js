@@ -3,7 +3,7 @@ import { hash, verify } from 'argon2'
 import { v4 as uuidV4 } from 'uuid'
 import { ApiError } from '../exceptions/ap-errors.js'
 
-export const create = async (email, pass, firstName= 'john', lastName='dou')=>{
+export const create = async (email, pass, activationLink, firstName= 'john', lastName='dou')=>{
     try{
         const isExists = await getByEmail(email)
         if (isExists){
@@ -11,8 +11,10 @@ export const create = async (email, pass, firstName= 'john', lastName='dou')=>{
           }
         const row = {
             id: uuidV4(),
+            activationLink,
             email,
             firstName,
+            is_activated:0,
             lastName,
             password: await hash(pass),
           }
@@ -43,4 +45,30 @@ export const getByEmail = async (email)=>{
     }catch(e){
         throw new Error(e.message)
     }
-  }
+}
+
+export const getByLink = async (link)=>{
+    console.log('search by link...')
+    try{
+        const user = await db.users.find({activationLink: link}, {}, {isIdempotent: true})
+        
+        return user
+    }catch(e){
+        throw new Error(e.message)
+    }
+}
+
+export const activate = async (data) => {
+    let user = db.normalize(data.first())
+
+    await db.users.update({id: user.id, isActivated: 1, activationLink: null}, {}, {isIdempotent: true})
+    
+    return user
+}
+
+export const maskEmail = (email)=>{
+    const [local, domen] = email.split('@');
+    const masked = local.substring(0, 2) + '*'.repeat(local.length - 2);
+    const maskedEmail = `${masked}@${domen}`;
+    return maskedEmail;
+}

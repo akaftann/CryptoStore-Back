@@ -8,8 +8,18 @@ CREATE TABLE IF NOT EXISTS accounts.users (
     first_name TEXT,
     last_name TEXT,
     email TEXT,
-    password TEXT
+    password TEXT,
+    activation_link UUID,
+    is_activated int,
 );
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS accounts.users_by_activation_link AS
+SELECT
+activation_link,
+    id
+FROM accounts.users
+WHERE activation_link is not null
+PRIMARY KEY (activation_link, id);
 
 CREATE TABLE IF NOT EXISTS accounts.tokens (
     id UUID PRIMARY KEY,

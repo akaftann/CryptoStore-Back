@@ -24,6 +24,11 @@ app.get('/api/protected', checkAccess, (req, res) => {
     res.json('hello world' + Date.now() + ' user: ' + user.id)
 })
 
+app.get('/api', (req, res)=>{
+    console.log('its get req...')
+    res.json('hello get')
+})
+
 app.listen(3000, () => {
     console.log('server started at port 3000')
 })

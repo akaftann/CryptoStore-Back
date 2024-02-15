@@ -20,8 +20,9 @@ export const registration = async(req,res, next)=>{
     const {email, pass} = req.body
     try{
         const result = await auth.register(email,pass)
+        console.log('masked mail: ', result.maskEmail)
         res.cookie('refreshToken', result.refreshToken,{maxAge:30*24*60*60*1000, httpOnly: true, secure: true})
-        res.status(200).json({message:'user successfully created', accessToken: result.accessToken, activationLink: result.activationLink})
+        res.status(200).json({message:'user successfully created', accessToken: result.accessToken, email: result.email})
     }catch(e){
         next(e)
     }

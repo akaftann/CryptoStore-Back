@@ -1,4 +1,6 @@
 import * as auth from '../services/auth.js'
+import dotenv from 'dotenv'
+dotenv.config()
 
 export const login = async(req,res, next)=>{
     console.log('starting login...')
@@ -56,7 +58,7 @@ export const activate = async(req, res, next)=>{
     try{
         const link = req.params.link
         await auth.activate(link)
-        return res.status(200).json('activated')
+        return res.redirect(process.env.CLIENT_URL)
     }catch(e){
         next(e)
     }

@@ -31,7 +31,7 @@ export const login = async (email, pass)=>{
 export const register = async (email, pass)=>{
     try{
         const activationLink = uuidv4()
-        await MailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`)
+        await MailService.sendActivationMail(email, `${process.env.API_URL}/activate/${activationLink}`)
         const user = await users.create(email, pass, activationLink)
         const tokens = jwtService.generateToken(user.id)
         await jwtService.saveToken(user.id, tokens.refreshToken)

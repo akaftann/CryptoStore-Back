@@ -6,7 +6,9 @@ class MailService{
 
     constructor(){
         this.transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.office365.com',
+            port: 587,
+            secure: false,
             auth: {
                 user: process.env.EMAIL_CLIENT,
                 pass: process.env.EMAIL_PASS

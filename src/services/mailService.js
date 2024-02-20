@@ -18,7 +18,7 @@ class MailService{
 
     async sendActivationMail(to, link){
         await this.transporter.sendMail({
-            from: process.env.EMAIL_CLIENT,
+            from: "no-reply",
             to,
             subject: 'activation link',
             text: '',

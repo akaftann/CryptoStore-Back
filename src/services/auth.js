@@ -66,7 +66,7 @@ export const refresh = async (refreshToken)=>{
         await jwtService.saveToken(userData.id, token.refreshToken)
         const user = await users.getById(tokenInDb.userId)
         const isActivate = user && user.activationLink ? false : true
-        const maskEmail =  users.maskEmail(user.email)
+        const maskEmail =  user && users.maskEmail(user.email)
         return {...token, isActivate, email: maskEmail}
 
     }catch(e){

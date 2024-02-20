@@ -1,7 +1,7 @@
 import Router from 'express'
 import * as authController from '../controllers/authController.js'
 import {check} from 'express-validator'
-import { auth } from 'cassandra-driver'
+import * as iComplyController from '../controllers/iComplyController.js'
 
 
 const authRouter = new Router()
@@ -15,6 +15,7 @@ authRouter.post('/logout', authController.logout)
 authRouter.get('/activate/:link')
 authRouter.get('/refresh', authController.refresh)
 authRouter.get('/activate/:link', authController.activate)
+authRouter.post('/webhook', iComplyController.webhook)
 
 
 export default authRouter

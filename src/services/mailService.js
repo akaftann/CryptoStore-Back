@@ -48,7 +48,7 @@ class MailService{
             subject: 'activation link',
             text: '',
             html: 
-                `
+                `git status
                 <div>
                     <h1>Click to the link below to activate your account</h1>
                     <a href="${link}">${link}</a> 

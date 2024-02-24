@@ -6,6 +6,8 @@ export const webhook = (req,res, next) => {
     const body = JSON.stringify(req.body);
     const headers = req.headers;
     const webhookSecret = process.env.WEBHOOKSECRET
+    console.log('wehok secret: ', webhookSecret)
+    console.log('body: ', body)
     const isSignatureValid = isSignatureCompatible(webhookSecret, body, headers);
 
     if (isSignatureValid) {

@@ -7,6 +7,7 @@ import { errorMiddleware } from './src/middlewares/error-middleware.js'
 import { checkAccess } from './src/middlewares/checkAuthorization.js'
 const app = express()
 
+app.use(bodyParser.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser())

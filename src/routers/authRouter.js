@@ -15,7 +15,7 @@ authRouter.post('/logout', authController.logout)
 authRouter.get('/activate/:link')
 authRouter.get('/refresh', authController.refresh)
 authRouter.get('/activate/:link', authController.activate)
-authRouter.post('/webhook', iComplyController.webhook)
+authRouter.post('/webhook-handler', iComplyController.webhook)
 
 
 export default authRouter

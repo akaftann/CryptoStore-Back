@@ -4,7 +4,7 @@ import jwtService from './jwt.js'
 import { ApiError } from '../exceptions/ap-errors.js'
 import { v4 as uuidv4 } from 'uuid'
 import MailService from './mailService.js'
-import * as db from '../lib/db.js'
+import { sendMail } from './amazonSES.js'
 
 const expiration = jwtService.access_token_expiration
 
@@ -31,7 +31,7 @@ export const login = async (email, pass)=>{
 export const register = async (email, pass)=>{
     try{
         const activationLink = uuidv4()
-        await MailService.sendActivationMail(email, `${process.env.API_URL}/activate/${activationLink}`)
+        await sendMail(email, `${process.env.API_URL}/activate/${activationLink}`)
         const user = await users.create(email, pass, activationLink)
         const tokens = jwtService.generateToken(user.id)
         await jwtService.saveToken(user.id, tokens.refreshToken)

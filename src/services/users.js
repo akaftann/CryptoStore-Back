@@ -28,12 +28,12 @@ export const create = async (email, pass, activationLink, firstName= 'john', las
 export const getById = async (id)=>{
   try{
       const user = await db.users.find({id}, {}, {isIdempotent: true})
-      if(!user){
+      if(user.length === 0){
           throw ApiError.BadRequest('User not found')
       }
       return db.normalize(user.first())
   }catch(e){
-      throw new Error(e.message)
+      throw e
   }
 }
 

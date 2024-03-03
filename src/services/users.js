@@ -19,6 +19,7 @@ export const create = async (email, pass, activationLink, firstName= 'john', las
             lastName,
             password: await hash(pass),
           }
+          console.log('creating user with params: ', row)
         await db.users.insert(row,{ifNotExists: true},{isIdempotent: true})
         return row
     }catch(e){

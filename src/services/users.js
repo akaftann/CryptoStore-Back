@@ -71,6 +71,7 @@ export const getByLink = async (link)=>{
 }
 
 export const activate = async (user) => {
+    console.log('clearing activation link...')
     await db.users.update({id: user.id, isActivated: 1, activationLink: null}, {}, {isIdempotent: true})
     return user
 }

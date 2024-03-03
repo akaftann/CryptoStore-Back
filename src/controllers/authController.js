@@ -1,5 +1,6 @@
 import * as auth from '../services/auth.js'
 import dotenv from 'dotenv'
+import { refreshAccessToken } from '../services/sumSub.js'
 dotenv.config()
 
 export const login = async(req,res, next)=>{
@@ -59,6 +60,17 @@ export const activate = async(req, res, next)=>{
         const link = req.params.link
         await auth.activate(link)
         return res.redirect(process.env.CLIENT_URL)
+    }catch(e){
+        next(e)
+    }
+}
+
+export const refreshSumsubToken = async(req, res, next)=>{
+    try{
+        console.log('start generating token..')
+        const externalId = req.body.externalId
+        const result = await refreshAccessToken(externalId)
+        return res.status(200).json(result)
     }catch(e){
         next(e)
     }

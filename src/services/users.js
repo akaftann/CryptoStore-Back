@@ -15,6 +15,7 @@ export const create = async (email, pass, activationLink, firstName= 'john', las
             email,
             firstName,
             is_activated:0,
+            is_verified: 0,
             lastName,
             password: await hash(pass),
           }
@@ -47,6 +48,16 @@ export const getByEmail = async (email)=>{
     }
 }
 
+export const getByExternalId = async (externalId)=>{
+    try{
+        const user = await db.users.find({externalId}, {}, {isIdempotent: true})
+        
+        return db.normalize(user.first())
+    }catch(e){
+        throw new Error(e.message)
+    }
+}
+
 export const getByLink = async (link)=>{
     console.log('search by link...')
     try{
@@ -58,11 +69,18 @@ export const getByLink = async (link)=>{
     }
 }
 
-export const activate = async (data) => {
-    let user = db.normalize(data.first())
-
+export const activate = async (user) => {
     await db.users.update({id: user.id, isActivated: 1, activationLink: null}, {}, {isIdempotent: true})
-    
+    return user
+}
+
+export const createSumsubExternalId = async (id, externalId) => {
+    const user = await db.users.update({id, externalId}, {}, {isIdempotent: true})
+    return user
+}
+
+export const refreshSumsubToken = async (id, token) => {
+    const user = await db.users.update({id, sumsubToken: token}, {}, {isIdempotent: true})
     return user
 }
 

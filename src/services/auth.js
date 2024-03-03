@@ -5,6 +5,8 @@ import { ApiError } from '../exceptions/ap-errors.js'
 import { v4 as uuidv4 } from 'uuid'
 import MailService from './mailService.js'
 import { sendMail } from './amazonSES.js'
+import {generateAccessToken} from './sumSub.js'
+import * as db from '../lib/db.js'
 
 const expiration = jwtService.access_token_expiration
 
@@ -67,7 +69,8 @@ export const refresh = async (refreshToken)=>{
         const user = await users.getById(tokenInDb.userId)
         const isActivate = user && user.activationLink ? false : true
         const maskEmail =  user && users.maskEmail(user.email)
-        return {...token, isActivate, email: maskEmail}
+        const externalId = user && user.externalId
+        return {...token, isActivate, email: maskEmail, externalId}
 
     }catch(e){
         throw e
@@ -81,7 +84,9 @@ export const activate = async (link)=> {
         if (!result.length) {
             throw ApiError.BadRequest('Invalid activaion link')
         }
-        await users.activate(result)
+        let user = db.normalize(result.first())
+        await users.activate(user)
+        await generateAccessToken(encodeURIComponent(user.email), user.id)
     }catch(e){
         throw e
     }

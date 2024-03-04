@@ -16,6 +16,7 @@
     "axios": "^1.6.7",
     "body-parser": "^1.20.2",
     "cassandra-driver": "^4.7.2",
+    "content-type": "^1.0.5",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -27,6 +28,7 @@
     "nodemailer": "^6.9.8",
     "nodemon": "^3.0.2",
     "prettier": "^3.1.0",
+    "raw-body": "^2.5.2",
     "stripe": "^14.8.0",
     "uuid": "^9.0.1"
   },

@@ -11,7 +11,7 @@ export const isSignatureCompatible = (SUMSUB_PRIVATE_KEY, headers, body)=>{
     throw new Error('Unsupported algorithm')
     }
 
-    const receivedSignature = req.headers['x-payload-digest']
+    const receivedSignature = headers['x-payload-digest']
     const computedSignature = crypto
     .createHmac(algo, SUMSUB_PRIVATE_KEY)
     .update(body)

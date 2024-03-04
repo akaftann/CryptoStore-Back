@@ -4,12 +4,12 @@ dotenv.config()
 
 export const webhook = (req,res, next) => {
     //const body = JSON.stringify(req.body);
-    const body = req.rawBody;
+    const body = Buffer.from(req.body, 'utf-8');
     const headers = req.headers
     const webhookSecret = process.env.SUMSUB_PRIVATE_KEY
     console.log('wehok secret: ', webhookSecret)
     console.log('body: ', req.body)
-    const isSignatureValid = isSignatureCompatible(webhookSecret, req);
+    const isSignatureValid = isSignatureCompatible(webhookSecret, headers, body);
 
     if (isSignatureValid) {
         // Обробка вхідного вебхуку тут

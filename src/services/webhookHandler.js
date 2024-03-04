@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-export const isSignatureCompatible = (SUMSUB_PRIVATE_KEY, headers, rawBody)=>{
+export const isSignatureCompatible = (SUMSUB_PRIVATE_KEY, headers, body)=>{
     console.log('start checking of signature: ', headers)
     const algo = {
         'HMAC_SHA1_HEX': 'sha1',
@@ -11,11 +11,19 @@ export const isSignatureCompatible = (SUMSUB_PRIVATE_KEY, headers, rawBody)=>{
     throw new Error('Unsupported algorithm')
     }
 
+    let computedSignature;
     const receivedSignature = headers['x-payload-digest']
-    const computedSignature = crypto
+    const secretBuffer = Buffer.from(SUMSUB_PRIVATE_KEY, 'utf-8');
+    const hasher = crypto.createHmac(algo, secretBuffer);
+    const dataBuffer = Buffer.from(body, 'utf-8');
+    const hash = hasher.update(dataBuffer).digest('hex');
+    computedSignature = hash;
+
+
+     /* computedSignature = crypto
                             .createHmac(algo, SUMSUB_PRIVATE_KEY)
                             .update(rawBody)
-                            .digest('hex')
+                            .digest('hex') */
 
     return computedSignature === receivedSignature
 }

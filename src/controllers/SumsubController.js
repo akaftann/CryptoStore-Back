@@ -1,11 +1,11 @@
-import {isSignatureCompatible} from '../services/iComply.js'
+import {isSignatureCompatible} from '../services/webhookHandler.js'
 import dotenv from 'dotenv'
 dotenv.config()
 
 export const webhook = (req,res, next) => {
     const body = JSON.stringify(req.body);
     const headers = req.headers
-    const webhookSecret = process.env.WEBHOOKSECRET
+    const webhookSecret = process.env.SUMSUB_PRIVATE_KEY
     console.log('wehok secret: ', webhookSecret)
     console.log('body: ', req.body)
     const isSignatureValid = isSignatureCompatible(webhookSecret, body, headers);

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS accounts.users (
     external_id TEXT,
     is_activated int,
     is_verified int,
-    sumsub_token text;
+    sumsub_token text
 );
 
 CREATE MATERIALIZED VIEW accounts.users_by_email AS

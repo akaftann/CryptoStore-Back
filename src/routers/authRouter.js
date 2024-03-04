@@ -1,7 +1,7 @@
 import Router from 'express'
 import * as authController from '../controllers/authController.js'
 import {check} from 'express-validator'
-import * as iComplyController from '../controllers/iComplyController.js'
+import * as iComplyController from '../controllers/SumsubController.js'
 
 
 const authRouter = new Router()

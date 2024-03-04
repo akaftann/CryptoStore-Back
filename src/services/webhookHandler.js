@@ -1,7 +1,6 @@
 import crypto from 'crypto'
 
 export const isSignatureCompatible = (SUMSUB_PRIVATE_KEY, headers, body)=>{
-    console.log('start checking of signature: ', body)
     const algo = {
         'HMAC_SHA1_HEX': 'sha1',
         'HMAC_SHA256_HEX': 'sha256',

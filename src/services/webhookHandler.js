@@ -6,7 +6,7 @@ export const isSignatureCompatible = (SUMSUB_PRIVATE_KEY, headers)=>{
         'HMAC_SHA1_HEX': 'sha1',
         'HMAC_SHA256_HEX': 'sha256',
         'HMAC_SHA512_HEX': 'sha512',
-       }[headers['X-Payload-Digest-Alg']]
+       }[headers['x-payload-digest-alg']]
     if (!algo) {
     throw new Error('Unsupported algorithm')
     }

@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-export const isSignatureCompatible = (SUMSUB_PRIVATE_KEY, headers)=>{
+export const isSignatureCompatible = (SUMSUB_PRIVATE_KEY, headers, rawBody)=>{
     console.log('start checking of signature: ', headers)
     const algo = {
         'HMAC_SHA1_HEX': 'sha1',
@@ -14,7 +14,7 @@ export const isSignatureCompatible = (SUMSUB_PRIVATE_KEY, headers)=>{
     const receivedSignature = headers['x-payload-digest']
     const computedSignature = crypto
                             .createHmac(algo, SUMSUB_PRIVATE_KEY)
-                            .update(req.rawBody)
+                            .update(rawBody)
                             .digest('hex')
 
     return computedSignature === receivedSignature

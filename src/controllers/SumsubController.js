@@ -4,17 +4,14 @@ import getRawBody from 'raw-body'
 import contentType from 'content-type'
 dotenv.config()
 
-export const webhook = (req,res, next) => {
+export const webhook = async (req,res, next) => {
     //const body = JSON.stringify(req.body);
-    const body = getRawBody(req, {
+    const body = await getRawBody(req, {
         length: req.headers['content-length'],
         limit: '1mb',
-        encoding: contentType.parse(req).parameters.charset
-      },  (err, string) =>{
-        if (err) return (err)
-        return string
-        
-      })
+        encoding: contentType.parse(req).parameters.charset,
+    });
+
     const headers = req.headers
     const webhookSecret = process.env.SUMSUB_PRIVATE_KEY
     console.log('body: ', body)

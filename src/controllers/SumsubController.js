@@ -8,13 +8,15 @@ export const webhook = async (req,res, next) => {
 
     const headers = req.headers
     const webhookSecret = process.env.SUMSUB_PRIVATE_KEY
-    console.log('body: ', JSON.stringify(body))
+    const rawBodyBuffer = Buffer.from(req.body);
+    const rawBodyString = rawBodyBuffer.toString('utf-8');
+    const parsedJson = JSON.parse(rawBodyString);
     const isSignatureValid = isSignatureCompatible(webhookSecret, headers, body);
 
     if (isSignatureValid) {
         // Обробка вхідного вебхуку тут
         console.log('Webhook received and signature is valid!');
-        console.log('Webhook data:', req.body);
+        console.log('Webhook data:', parsedJson);
         res.status(200).send('Webhook received and signature is valid!');
     } else {
         // Неправильна сумісність підпису - можливо, це атака

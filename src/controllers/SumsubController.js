@@ -7,7 +7,7 @@ export const webhook = (req,res, next) => {
     const body = req.rawBody
     const headers = req.headers
     const webhookSecret = process.env.SUMSUB_PRIVATE_KEY
-    console.log('body: ', req.body)
+    console.log('body: ', body)
     const isSignatureValid = isSignatureCompatible(webhookSecret, headers, body);
 
     if (isSignatureValid) {

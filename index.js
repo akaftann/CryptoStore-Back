@@ -5,25 +5,12 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import { errorMiddleware } from './src/middlewares/error-middleware.js'
 import { checkAccess } from './src/middlewares/checkAuthorization.js'
-import bodyParser from 'body-parser'
-import getRawBody from 'raw-body'
-import contentType from 'content-type'
-const app = express()
 
+
+const app = express()
+app.use(express.raw({ type: '*/*' }));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-/* app.use((req, res, next) => {
-    getRawBody(req, {
-        length: req.headers['content-length'],
-        limit: '1mb',
-        encoding: contentType.parse(req).parameters.charset
-      },  (err, string) =>{
-        if (err) return next(err)
-        req.rawBody = string
-        next()
-      })
-}) */
-//app.use(bodyParser.raw({ type: '*/*', verify: (req, res, buf) => { req.rawBody = buf; } }));
 app.use(cookieParser())
 app.use(cors({
     credentials: true,

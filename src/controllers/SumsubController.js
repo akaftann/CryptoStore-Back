@@ -1,16 +1,10 @@
 import {isSignatureCompatible} from '../services/webhookHandler.js'
 import dotenv from 'dotenv'
-import getRawBody from 'raw-body'
-import contentType from 'content-type'
 dotenv.config()
 
 export const webhook = async (req,res, next) => {
     //const body = JSON.stringify(req.body);
-    const body = await getRawBody(req, {
-        length: req.headers['content-length'],
-        limit: '1mb',
-        encoding: contentType.parse(req).parameters.charset,
-    });
+    const body = req.body
 
     const headers = req.headers
     const webhookSecret = process.env.SUMSUB_PRIVATE_KEY

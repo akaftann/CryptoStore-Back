@@ -92,3 +92,15 @@ export const maskEmail = (email)=>{
     const maskedEmail = `${masked}@${domen}`;
     return maskedEmail;
 }
+
+export const verifyStatus = async (externalId) => {
+    console.log('search by link...')
+    try{
+        let user = await db.users.find({externalId}, {}, {isIdempotent: true})
+        const normalizedUser = db.normalize(user.first())
+         user = await db.users.update({id: normalizedUser.id, isVerified: 1}, {}, {isIdempotent: true})
+        return user
+    }catch(e){
+        throw new Error(e.message)
+    }
+}

@@ -72,7 +72,8 @@ export const refresh = async (refreshToken)=>{
         const isActivate = user && user.activationLink ? false : true
         const maskEmail =  user && users.maskEmail(user.email)
         const externalId = user && user.externalId
-        return {...token, isActivate, email: maskEmail, externalId}
+        const isVerified = user && user.isVerified===1? true: false
+        return {...token, isActivate, email: maskEmail, externalId, isVerified}
 
     }catch(e){
         throw e

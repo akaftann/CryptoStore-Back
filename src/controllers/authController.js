@@ -19,8 +19,8 @@ export const login = async(req,res, next)=>{
 }
 
 export const registration = async(req,res, next)=>{
-    console.log('starting registration...')
     const {email, pass} = req.body
+    console.log('starting registration...', req.body)
     try{
         const result = await auth.register(email,pass)
         console.log('masked mail: ', result.maskEmail)
@@ -33,7 +33,7 @@ export const registration = async(req,res, next)=>{
 
 export const logout = async(req, res, next)=>{
     try{
-        const {refreshToken} = req.cookies
+        const refreshToken = req.headers.cookie.split('; ').find(row => row.startsWith('refreshToken=')).split('=')[1];
         console.log('starting logout..', refreshToken)
         res.clearCookie('refreshToken')
         const token = await auth.logout(refreshToken)
@@ -45,8 +45,9 @@ export const logout = async(req, res, next)=>{
 
 export const refresh = async(req, res, next) => {
     try{
-        console.log('start refreshing token...', new Date().getSeconds())
-        const {refreshToken} = req.cookies
+        console.log('start refreshing token...', req.cookie)
+        const refreshToken = req.headers.cookie.split('; ').find(row => row.startsWith('refreshToken=')).split('=')[1];
+        //const {refreshToken} = req.cookies
         const userData = await auth.refresh(refreshToken)
         res.cookie('refreshToken', userData.refreshToken,{maxAge:30*24*60*60*1000, httpOnly: true})
         return res.status(200).json(userData)

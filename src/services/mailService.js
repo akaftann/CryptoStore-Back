@@ -8,7 +8,7 @@ class MailService{
         this.transporter = nodemailer.createTransport({
             host: 'smtp.office365.com',
             port: 587,
-            secure: false,
+            secureConnection: true,
             auth: {
                 user: process.env.EMAIL_CLIENT,
                 pass: process.env.EMAIL_PASS
@@ -17,8 +17,9 @@ class MailService{
     }
 
     async sendActivationMail(to, link){
+        console.log('sending activation link..', to)
         await this.transporter.sendMail({
-            from: "no-reply",
+            from: process.env.EMAIL_CLIENT,
             to,
             subject: 'activation link',
             text: '',

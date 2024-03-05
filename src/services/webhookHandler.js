@@ -18,3 +18,4 @@ export const isSignatureCompatible = (SUMSUB_PRIVATE_KEY, headers, body)=>{
 
     return computedSignature === receivedSignature
 }
+

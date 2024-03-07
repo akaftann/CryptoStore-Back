@@ -58,9 +58,10 @@ export const refresh = async(req, res, next) => {
 
 export const activate = async(req, res, next)=>{
     try{
-        const link = req.params.link
-        await auth.activate(link)
-        return res.redirect(process.env.CLIENT_URL)
+        const {activationCode} = req.body
+        const token = req.headers.authorization
+        const result = await auth.activate(activationCode, token)
+        return res.status(200).json(result)
     }catch(e){
         next(e)
     }

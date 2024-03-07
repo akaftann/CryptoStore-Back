@@ -16,20 +16,19 @@ class MailService{
         })
     }
 
-    async sendActivationMail(to, link){
-        console.log('sending activation link..', to)
+    async sendActivationMail(to, activationCode) {
+        console.log('sending activation mail to', to);
         await this.transporter.sendMail({
             from: process.env.EMAIL_CLIENT,
             to,
-            subject: 'activation link',
-            text: '',
-            html: 
-                `git status
+            subject: 'INTHEDAY Activation Code',
+            text: `Your activation code is: ${activationCode}`,
+            html: `
                 <div>
-                    <h1>Click to the link below to activate your account</h1>
-                    <a href="${link}">${link}</a> 
+                    <h1>Use the following activation code to activate your account</h1>
+                    <p><strong>Activation Code:</strong> ${activationCode}</p>
                 </div>
-                `
+            `,
         })
     }
     

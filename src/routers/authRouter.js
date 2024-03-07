@@ -14,7 +14,7 @@ authRouter.post('/registration', check('email', 'username field can\'t be empty'
 authRouter.post('/logout', authController.logout)
 authRouter.get('/activate/:link')
 authRouter.get('/refresh', authController.refresh)
-authRouter.get('/activate/:link', authController.activate)
+authRouter.post('/activate', authController.activate)
 authRouter.post('/webhook-handler', iComplyController.webhook)
 authRouter.post('/access-token', authController.refreshSumsubToken)
 

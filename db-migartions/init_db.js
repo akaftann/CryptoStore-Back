@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS accounts.users (
     last_name TEXT,
     email TEXT,
     password TEXT,
-    activation_link UUID,
+    activation_code int,
     external_id TEXT,
     is_activated int,
     is_verified int,
@@ -17,21 +17,21 @@ CREATE TABLE IF NOT EXISTS accounts.users (
 );
 
 CREATE MATERIALIZED VIEW accounts.users_by_email AS
-    SELECT email, id, activation_link, first_name, is_activated, last_name, password, sumsub_token, is_verified, external_id
+    SELECT email, id, activation_code, first_name, is_activated, last_name, password, sumsub_token, is_verified, external_id
     FROM accounts.users
     WHERE email IS NOT null AND id IS NOT null
     PRIMARY KEY (email, id);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS accounts.users_by_activation_link AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS accounts.users_by_activation_code AS
 SELECT
-activation_link,
+activation_code,
     id,
     is_verified,
     email,
     external_id
 FROM accounts.users
-WHERE activation_link is not null
-PRIMARY KEY (activation_link, id);
+WHERE activation_code is not null
+PRIMARY KEY (activation_code, id);
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS accounts.users_by_external_id AS
 SELECT

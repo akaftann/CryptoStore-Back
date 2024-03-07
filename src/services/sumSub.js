@@ -202,6 +202,7 @@ export const refreshAccessToken = async(encodedExtUserId)=> {
   const levelName = 'basic-kyc-level';
   console.log("External UserID: ", encodedExtUserId); 
   const user = await getByExternalId(encodedExtUserId)
+  console.log('get by external_id..', user)
   const accessToken = await axios(createAccessToken(encodedExtUserId, levelName, 1200))
   await refreshSumsubToken(user.id, accessToken.data.token)
 

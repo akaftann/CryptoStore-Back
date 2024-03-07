@@ -21,10 +21,11 @@ export const login = async (email, pass)=>{
             throw ApiError.UnauthorizedError('Invalid login or password')
         }
         const tokens = jwtService.generateToken(user.id)
-        const isActivate = user.activationLink ? false : true
+        const isActivated = user && user.isActivated===1? true: false
+        const isVerified = user && user.isVerified===1? true: false
         await jwtService.saveToken(user.id, tokens.refreshToken)
         const maskEmail =  users.maskEmail(user.email)
-        return {...tokens, isActivate, email: maskEmail}
+        return {...tokens, isActivated, email: maskEmail, isVerified}
     }catch(e){
         throw e
     }

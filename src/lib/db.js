@@ -10,6 +10,7 @@ export const client = new cassandra.Client(
 const TABLES = {
   USERS: 'users',
   TOKENS: 'tokens',
+  WALLETS: 'wallets'
 }
 
 const UnderscoreCqlToCamelCaseMappings = cassandra.mapping.UnderscoreCqlToCamelCaseMappings
@@ -20,7 +21,9 @@ export const mapper = new cassandra.mapping.Mapper(client, {
     users: {
       tables: [
         TABLES.USERS,
-        {name: 'users_by_email', isView: true}
+        {name: 'users_by_email', isView: true},
+        {name: 'users_by_activation_code', isView: true},
+        {name: 'users_by_external_id', isView: true},
       ],
       mappings: new UnderscoreCqlToCamelCaseMappings()
     },
@@ -32,11 +35,19 @@ export const mapper = new cassandra.mapping.Mapper(client, {
       ],
       mappings: new UnderscoreCqlToCamelCaseMappings()
     },
+    wallets:{
+      tables: [
+        TABLES.WALLETS,
+        {name: 'wallet_by_user', isView: true},
+      ],
+      mappings: new UnderscoreCqlToCamelCaseMappings()
+    },
   }
 })
 
 export const users = mapper.forModel('users')
 export const tokens = mapper.forModel('tokens')
+export const wallets = mapper.forModel('wallets')
 
 export const normalize = (objects) => {
   const isArray = Array.isArray(objects)

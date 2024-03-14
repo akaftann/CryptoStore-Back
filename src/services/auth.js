@@ -2,35 +2,52 @@ import { verify } from 'argon2'
 import * as users from './users.js'
 import jwtService from './jwt.js'
 import { ApiError } from '../exceptions/ap-errors.js'
+import { v4 as uuidv4 } from 'uuid'
+import MailService from './mailService.js'
+import { sendMail } from './amazonSES.js'
+import {generateAccessToken} from './sumSub.js'
+import { getByUserId } from './wallet.js'
 
+const expiration = jwtService.access_token_expiration
 
 export const login = async (email, pass)=>{
     try{
         const user = await users.getByEmail(email)
         if(!user){
-            throw ApiError.BadRequest('User not found')
+            throw ApiError.NotFound()
         }
         const isValid = await verify(user.password, pass)
         if(!isValid){
-            throw ApiError.BadRequest('Invalid password')
+            throw ApiError.UnauthorizedError('Invalid login or password')
         }
-        const token = jwtService.generateToken(user.id)
-        await jwtService.saveToken(user.id, token.refreshToken)
-        return token
+        const tokens = jwtService.generateToken(user.id)
+        const isActivated = user && user.isActivated===1? true: false
+        const isVerified = user && user.isVerified===1? true: false
+        await jwtService.saveToken(user.id, tokens.refreshToken)
+        const maskEmail =  users.maskEmail(user.email)
+        return {...tokens, isActivated, email: maskEmail, isVerified}
     }catch(e){
-        throw new Error(e.message)
+        throw e
     }
+}
+const generateActivationCode = () => {
+    const min = 10000;
+    const max = 99999;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 export const register = async (email, pass)=>{
     try{
-        const expiration = jwtService.access_token_expiration
-        const user = await users.create(email, pass)
+        const activationCode = generateActivationCode()
+        console.log('for email...', email)
+        await MailService.sendActivationMail(email, activationCode)
+        const user = await users.create(email, pass, activationCode)
         const tokens = jwtService.generateToken(user.id)
         await jwtService.saveToken(user.id, tokens.refreshToken)
-        return {...tokens, expiration}
+        const maskEmail =  users.maskEmail(email)
+        return {...tokens, email: maskEmail}
     }catch(e){
-        throw new Error(e.message)
+        throw e
     }
 }
 
@@ -45,8 +62,9 @@ export const logout = async (refreshToken)=>{
 
 export const refresh = async (refreshToken)=>{
     try{
+        console.log('refresh t..',refreshToken)
         if(!refreshToken){
-            throw ApiError.UnauthorizedError('Unauthorized user')
+            throw ApiError.UnauthorizedError('Unauthorized')
         }
         const userData = await jwtService.validateRefreshToken(refreshToken)
         const tokenInDb = await jwtService.findInDb(refreshToken)
@@ -55,10 +73,38 @@ export const refresh = async (refreshToken)=>{
         }
         const token = jwtService.generateToken(userData.id)
         await jwtService.saveToken(userData.id, token.refreshToken)
-        return token
+        const user = await users.getById(tokenInDb.userId)
+        const wallet = await getByUserId(user.id)
+        const walletNumber = wallet ? wallet.walletNumber : ''
+        const network = wallet ? wallet.network : ''
+        const isActivate = user && user.isActivated===1 ? true : false
+        const maskEmail =  user && users.maskEmail(user.email)
+        const externalId = user && user.externalId
+        const isVerified = user && user.isVerified===1? true: false
+        return {...token, isActivate, email: maskEmail, externalId, isVerified, walletNumber, network}
 
     }catch(e){
+        throw e
+    }
+}
 
+export const activate = async (code, token)=> {
+    try{
+        console.log('starting activation, code: ', code)
+        /* if (!result.length) {
+            throw ApiError.BadRequest('Invalid activaion code')
+        } */
+        const {id} = await jwtService.validateAccessToken(token.split(' ')[1])
+        const user = await users.getById(id)
+        if(code==user.activationCode ? false: true){
+            throw ApiError.BadRequest("Invalid activation code")
+        }
+        await users.activate(user)
+        await generateAccessToken(encodeURIComponent(user.email), user.id)
+        const updatedUser = await users.getById(id)
+        return updatedUser
+    }catch(e){
+        throw e
     }
 }
 

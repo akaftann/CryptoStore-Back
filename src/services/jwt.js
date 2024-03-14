@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import * as db from '../lib/db.js'
 import dotenv from 'dotenv'
 import { v4 as uuidV4 } from 'uuid'
+import { ApiError } from '../exceptions/ap-errors.js'
 dotenv.config()
 
 
@@ -67,7 +68,7 @@ class JwtService{
             const data = jwt.verify(token, this.access_secret)
             return data
         }catch(e){
-            return null
+            throw ApiError.UnauthorizedError('Unauthorized user')
         }
     }
     

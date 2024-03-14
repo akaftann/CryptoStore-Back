@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 import MailService from './mailService.js'
 import { sendMail } from './amazonSES.js'
 import {generateAccessToken} from './sumSub.js'
-import * as db from '../lib/db.js'
+import { getByUserId } from './wallet.js'
 
 const expiration = jwtService.access_token_expiration
 
@@ -73,13 +73,15 @@ export const refresh = async (refreshToken)=>{
         }
         const token = jwtService.generateToken(userData.id)
         await jwtService.saveToken(userData.id, token.refreshToken)
-        console.log('token id db: ', tokenInDb)
         const user = await users.getById(tokenInDb.userId)
+        const wallet = await getByUserId(user.id)
+        const walletNumber = wallet ? wallet.walletNumber : ''
+        const network = wallet ? wallet.network : ''
         const isActivate = user && user.isActivated===1 ? true : false
         const maskEmail =  user && users.maskEmail(user.email)
         const externalId = user && user.externalId
         const isVerified = user && user.isVerified===1? true: false
-        return {...token, isActivate, email: maskEmail, externalId, isVerified}
+        return {...token, isActivate, email: maskEmail, externalId, isVerified, walletNumber, network}
 
     }catch(e){
         throw e

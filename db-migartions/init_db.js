@@ -68,3 +68,20 @@ WHERE refresh_token is not null
 PRIMARY KEY (refresh_token, id);
 
 
+CREATE TABLE IF NOT EXISTS accounts.wallets (
+    id UUID PRIMARY KEY,
+    wallet_number TEXT,
+    network TEXT,
+    user_id UUID,
+);
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS accounts.wallet_by_user AS
+SELECT
+user_id,
+    id,
+    wallet_number,
+    network
+FROM accounts.wallets
+WHERE user_id is not null
+PRIMARY KEY (user_id, id);
+

@@ -18,8 +18,8 @@ app.use(cors({
 app.use(rawBodyMiddleware)
 app.use(express.urlencoded({ extended: true }))
 app.use('/api', routers.userRouter)
-app.use('/api', routers.paymentRouter)
 app.use('/api', routers.authRouter)
+app.use('/api', routers.walletRouter)
 app.use(errorMiddleware)
 
 app.get('/api/protected', checkAccess, (req, res) => {

@@ -11,7 +11,19 @@ export const login = async(req,res, next)=>{
         res.cookie('refreshToken', result.refreshToken,{maxAge:30*24*60*60*1000, httpOnly: true, secure: true})
         console.log('login res: ', {message:'success', accessToken: result.accessToken, isActivate: result.isActivate, email: result.maskEmail})
         console.log('login res2: ', result)
-        res.status(200).json({message:'success', accessToken: result.accessToken, isActivated: result.isActivated, email: result.email, isVerified: result.isVerified})
+        res.status(200).json({message:'success', accessToken: result.accessToken, isActivated: result.isActivated, email: result.email, isVerified: result.isVerified, otpEnabled: result.otpEnabled})
+    }catch(e){
+        next(e)
+    }
+
+}
+
+export const preLogin = async(req,res, next)=>{
+    console.log('starting pre login...')
+    const {email, pass} = req.body
+    try{
+        const result = await auth.login(email, pass)
+        res.status(200).json({message:'success',  email: result.email, otpEnabled: result.otpEnabled, userId: result.userId})
     }catch(e){
         next(e)
     }

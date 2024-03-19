@@ -22,7 +22,6 @@ export const mapper = new cassandra.mapping.Mapper(client, {
       tables: [
         TABLES.USERS,
         {name: 'users_by_email', isView: true},
-        {name: 'users_by_activation_code', isView: true},
         {name: 'users_by_external_id', isView: true},
       ],
       mappings: new UnderscoreCqlToCamelCaseMappings()

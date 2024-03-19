@@ -18,6 +18,8 @@ export const create = async (email, pass, activationCode, firstName= 'john', las
             is_verified: 0,
             lastName,
             password: await hash(pass),
+            otp_enabled: 0,
+            otp_verified: 0,
           }
           console.log('creating user with params: ', row)
         await db.users.insert(row,{ifNotExists: true},{isIdempotent: true})
@@ -59,16 +61,6 @@ export const getByExternalId = async (externalId)=>{
     }
 }
 
-export const getByLink = async (link)=>{
-    console.log('search by link...')
-    try{
-        const user = await db.users.find({activationCode: link}, {}, {isIdempotent: true})
-        
-        return user
-    }catch(e){
-        throw new Error(e.message)
-    }
-}
 
 export const activate = async (user) => {
     console.log('clearing activation code...')

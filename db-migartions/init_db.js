@@ -13,25 +13,20 @@ CREATE TABLE IF NOT EXISTS accounts.users (
     external_id TEXT,
     is_activated int,
     is_verified int,
-    sumsub_token text
+    sumsub_token text,
+    otp_enabled int,
+    otp_verified int,
+    otp_auth_url text,
+    otp_secret text,
 );
 
 CREATE MATERIALIZED VIEW accounts.users_by_email AS
-    SELECT email, id, activation_code, first_name, is_activated, last_name, password, sumsub_token, is_verified, external_id
+    SELECT email, id, activation_code, first_name, is_activated, last_name, password, sumsub_token, 
+    is_verified, external_id, otp_enabled
     FROM accounts.users
     WHERE email IS NOT null AND id IS NOT null
     PRIMARY KEY (email, id);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS accounts.users_by_activation_code AS
-SELECT
-activation_code,
-    id,
-    is_verified,
-    email,
-    external_id
-FROM accounts.users
-WHERE activation_code is not null
-PRIMARY KEY (activation_code, id);
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS accounts.users_by_external_id AS
 SELECT
@@ -84,4 +79,6 @@ user_id,
 FROM accounts.wallets
 WHERE user_id is not null
 PRIMARY KEY (user_id, id);
+
+
 

@@ -35,7 +35,7 @@ export const generateOTP = async (userId) => {
     }
 };
 
-export const verifyOTP = async (userId, token) => {
+export const verifyOTP = async (userId, token, firstOtpPassed) => {
     try {
         console.log('verifyOTP...', token)
         const user = await users.getById(userId)
@@ -55,8 +55,11 @@ export const verifyOTP = async (userId, token) => {
         if (delta === null) {
             throw ApiError.BadRequest('invalid 2FA code')
         }
-
-        await db.users.update({id: user.id, otpEnabled: 1}, {}, {isIdempotent: true})
+        if(firstOtpPassed){
+            await db.users.update({id: user.id, otpEnabled: 1, firstOtpPassed: 1}, {}, {isIdempotent: true})
+        }else{
+            await db.users.update({id: user.id, otpEnabled: 1}, {}, {isIdempotent: true})
+        }
         return { otpEnabled: true}
     } catch (e) {
         throw e

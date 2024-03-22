@@ -18,11 +18,12 @@ CREATE TABLE IF NOT EXISTS accounts.users (
     otp_verified int,
     otp_auth_url text,
     otp_secret text,
+    first_otp_passed int,
 );
 
 CREATE MATERIALIZED VIEW accounts.users_by_email AS
     SELECT email, id, activation_code, first_name, is_activated, last_name, password, sumsub_token, 
-    is_verified, external_id, otp_enabled
+    is_verified, external_id, otp_enabled, first_otp_passed
     FROM accounts.users
     WHERE email IS NOT null AND id IS NOT null
     PRIMARY KEY (email, id);
@@ -33,7 +34,8 @@ SELECT
 external_id,
     id,
     is_verified,
-    email
+    email,
+    first_otp_passed
 FROM accounts.users
 WHERE external_id is not null
 PRIMARY KEY (external_id, id);

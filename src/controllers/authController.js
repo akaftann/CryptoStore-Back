@@ -11,7 +11,7 @@ export const login = async(req,res, next)=>{
         res.cookie('refreshToken', result.refreshToken,{maxAge:30*24*60*60*1000, httpOnly: true, secure: true})
         console.log('login res: ', {message:'success', accessToken: result.accessToken, isActivate: result.isActivate, email: result.maskEmail})
         console.log('login res2: ', result)
-        res.status(200).json({message:'success', accessToken: result.accessToken, isActivated: result.isActivated, email: result.email, isVerified: result.isVerified, otpEnabled: result.otpEnabled})
+        res.status(200).json({message:'success', accessToken: result.accessToken, isActivated: result.isActivated, email: result.email, isVerified: result.isVerified, otpEnabled: result.otpEnabled, firstOtpPassed: result.firstOtpPassed})
     }catch(e){
         next(e)
     }

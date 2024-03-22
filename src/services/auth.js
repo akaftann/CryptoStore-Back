@@ -24,9 +24,10 @@ export const login = async (email, pass)=>{
         const isActivated = user && user.isActivated===1? true: false
         const isVerified = user && user.isVerified===1? true: false
         const otpEnabled = user && user.otpEnabled===1? true: false
+        const firstOtpPassed = user && user.firstOtpPassed===1? true: false
         await jwtService.saveToken(user.id, tokens.refreshToken)
         const maskEmail =  users.maskEmail(user.email)
-        return {...tokens, isActivated, email: maskEmail, isVerified, otpEnabled, userId: user.id}
+        return {...tokens, isActivated, email: maskEmail, isVerified, otpEnabled, userId: user.id, firstOtpPassed}
     }catch(e){
         throw e
     }
@@ -83,8 +84,9 @@ export const refresh = async (refreshToken)=>{
         const externalId = user && user.externalId
         const isVerified = user && user.isVerified===1? true: false
         const otpEnabled = user && user.otpEnabled===1? true: false
+        const firstOtpPassed = user && user.firstOtpPassed===1? true: false
         const userId = user && user.id
-        return {...token, isActivate, email: maskEmail, externalId, isVerified, walletNumber, network, otpEnabled, userId}
+        return {...token, isActivate, email: maskEmail, externalId, isVerified, walletNumber, network, otpEnabled, userId, firstOtpPassed}
 
     }catch(e){
         throw e

@@ -20,6 +20,7 @@ export const create = async (email, pass, activationCode, firstName= 'john', las
             password: await hash(pass),
             otp_enabled: 0,
             otp_verified: 0,
+            first_otp_passed: 0,
           }
           console.log('creating user with params: ', row)
         await db.users.insert(row,{ifNotExists: true},{isIdempotent: true})

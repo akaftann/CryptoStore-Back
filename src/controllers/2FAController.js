@@ -17,9 +17,9 @@ export const getQRImage = async (req, res, next) => {
 export const verifyToken = async (req, res, next) => {
     try{
         const authToken = req.headers.authorization
-        const {token} = req.body
+        const {token, firstOtpPassed} = req.body
         const {id} = await jwtService.validateAccessToken(authToken.split(' ')[1])
-        const result = await verifyOTP(id, token)
+        const result = await verifyOTP(id, token, firstOtpPassed)
         const {otpEnabled} = result
         return res.status(200).json({message: "success", otpEnabled});
     }catch(e){
